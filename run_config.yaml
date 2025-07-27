@@ -1,0 +1,20 @@
+PHANTOM:
+  object: WaterWall
+  shape: [100, 100, 200]
+  wall_thickness: 10.0
+  voxel_size: 1.0
+  detector_distance: 10.0
+
+XRAY_TUBE:
+  tube_voltage: 120
+  anode_material: "W"
+  filter:
+    - "Sn": 0.4
+    - "Cu": 0.1
+  beam_angle: null
+
+SAMPLER:
+  sampling_strategy: "MC"
+  num_photons: 1e6
+  num_scatters: 10
+

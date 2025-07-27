@@ -1,0 +1,8 @@
+2025-07-25 10:31:33,955 - INFO - WaterWall shape: [ 100  100 1000]
+2025-07-25 10:31:33,955 - INFO - WaterWall wall thickness: 5.0 world units
+2025-07-25 10:31:33,955 - INFO - WaterWall voxel size: 10.0 world units
+2025-07-25 10:31:33,955 - INFO - WaterWall detector distance: 1.0 world units
+2025-07-25 10:31:36,493 - INFO - WaterWall thickness in voxels: 1
+2025-07-25 10:31:36,494 - INFO - WaterWall distance to detector in voxels: 1
+2025-07-25 10:31:36,501 - INFO - Material grid saved to ./data/input/phantoms/water_wall/5_0mmThick__1_0mmDetectorDistance__10_0mmVoxelSize/material_grid.npy
+2025-07-25 10:31:43,592 - INFO - Material grid generated and saved to ./data/input/phantoms/water_wall/5_0mmThick__1_0mmDetectorDistance__10_0mmVoxelSize
