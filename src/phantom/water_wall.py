@@ -23,12 +23,14 @@ class WaterWall:
         self.wall_thickness = float(wall_thickness)
         self.voxel_size = float(voxel_size)
         self.detector_distance = float(detector_distance)
-        
-        self.phantom_path = './data/input/phantoms/water_wall/{wall_thickness}mmThick__{detector_distance}mmDetectorDistance__{voxel_size}mmVoxelSize'.format(
+
+        self.phantom_type_path = 'water_wall/{wall_thickness}mmThick__{detector_distance}mmDetectorDistance__{voxel_size}mmVoxelSize'.format(
             wall_thickness=str(self.wall_thickness).replace('.', '_'),
             detector_distance=str(self.detector_distance).replace('.', '_'),
             voxel_size=str(self.voxel_size).replace('.', '_')
         )
+
+        self.phantom_path = './data/input/phantoms/{self.phantom_type_path}'
         if not os.path.exists(self.phantom_path):
             os.makedirs(self.phantom_path, exist_ok=True)
         self.description_log = phantom_logger(os.path.join(self.phantom_path, "description.txt"))

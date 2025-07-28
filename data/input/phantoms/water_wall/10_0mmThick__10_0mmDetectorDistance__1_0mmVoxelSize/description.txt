@@ -1,8 +1,8 @@
-2025-07-27 20:15:17,672 - INFO - WaterWall shape: (100, 100, 200)
-2025-07-27 20:15:17,672 - INFO - WaterWall wall thickness: 10.0 world units
-2025-07-27 20:15:17,672 - INFO - WaterWall voxel size: 1.0 world units
-2025-07-27 20:15:17,672 - INFO - WaterWall detector distance: 10.0 world units
-2025-07-27 20:15:17,672 - INFO - WaterWall thickness in voxels: 10
-2025-07-27 20:15:17,672 - INFO - WaterWall distance to detector in voxels: 10
-2025-07-27 20:15:17,673 - INFO - Material grid saved to ./data/input/phantoms/water_wall/10_0mmThick__10_0mmDetectorDistance__1_0mmVoxelSize/material_grid.npy
-2025-07-27 20:15:18,634 - INFO - Material grid generated and saved to ./data/input/phantoms/water_wall/10_0mmThick__10_0mmDetectorDistance__1_0mmVoxelSize/material_grid.npy
+2025-07-28 18:47:42,064 - INFO - WaterWall shape: (100, 100, 200)
+2025-07-28 18:47:42,064 - INFO - WaterWall wall thickness: 10.0 world units
+2025-07-28 18:47:42,064 - INFO - WaterWall voxel size: 1.0 world units
+2025-07-28 18:47:42,064 - INFO - WaterWall detector distance: 10.0 world units
+2025-07-28 18:47:42,065 - INFO - WaterWall thickness in voxels: 10
+2025-07-28 18:47:42,065 - INFO - WaterWall distance to detector in voxels: 10
+2025-07-28 18:47:42,065 - INFO - Material grid saved to ./data/input/phantoms/water_wall/10_0mmThick__10_0mmDetectorDistance__1_0mmVoxelSize/material_grid.npy
+2025-07-28 18:47:42,973 - INFO - Material grid generated and saved to ./data/input/phantoms/water_wall/10_0mmThick__10_0mmDetectorDistance__1_0mmVoxelSize/material_grid.npy
