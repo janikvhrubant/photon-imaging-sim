@@ -17,7 +17,6 @@ class Evaluation:
 
     def store_detector_grids(self, file_path: str):
         full_path = f'./data/output/detector_grids/{file_path}'
-        # make sure full_path exists
         if not os.path.exists(full_path):
             os.makedirs(full_path, exist_ok=True)
 
@@ -59,3 +58,10 @@ class Evaluation:
         plt.savefig(f'{path}/full_energies.png')
         plt.close()
         self.logger.info("Full energies plot saved.")
+
+    def store_plots(self, path: str):
+        full_path = f'./data/output/detector_grids/{path}'
+        self.primary_plot(full_path)
+        self.scatter_plot(full_path)
+        self.full_plot(full_path)
+        

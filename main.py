@@ -16,13 +16,10 @@ if __name__ == "__main__":
     with open('run_config.yaml', 'r') as f:
         config = yaml.safe_load(f)
 
-    # phantom_config = config['PHANTOM']
-    # shape = np.array(phantom_config['shape']).astype(int)
-    # wall_thickness = float(phantom_config['wall_thickness'])
-    # voxel_size = float(phantom_config['voxel_size'])
-    # detector_distance = float(phantom_config['detector_distance'])
+    output_path = f"{config['PHANTOM']['object']}/thick{config['PHANTOM']['wall_thickness']}mm/{f"{float(config['SAMPLER']['num_photons']):.0E}".replace(".0E", "E")}{config['SAMPLER']['sampling_strategy']}{config['SAMPLER']['num_scatters']}scatters"
 
     phantom = PhantomSetup(config).phantom
+    phantom.phantom_type_path = output_path
     
     world = WorldGrid(phantom.grid_path)
     # materials = world.get_all_materials()
@@ -43,25 +40,44 @@ if __name__ == "__main__":
 
     logging.info(f"Generated {sampler.num_photons} photons with positions {positions.shape}, directions {directions.shape}, and energies {energies.shape}.")
 
-    new_positions, entry_points, crossed_voxels, crossed_materials, distances, \
-        forward_iterations = world.traverse_grid_air(positions, directions)
-    positions = new_positions.copy()
-    
-    for scatter_index in range(sampler.num_scatters):
-        distance_randoms = sampler.randoms[:,(1+scatter_index)*3]
-        compton_randoms = sampler.randoms[:,(1+scatter_index)*3+1:(1+scatter_index)*3+3]
-        logging.info(f"Scatter iteration {scatter_index + 1}/{sampler.num_scatters}.")
-        arrive_detector_positions, detector_signals, intensities, positions, energies \
-            = world.fd_iteration(positions, directions, distance_randoms, compton_randoms, att, energies, intensities)
+    worked_on_index = 0
+    batch_size = int(float(config['SAMPLER'].get('batch_size', 1e5)))
+    while worked_on_index < sampler.num_photons:
+        curr_num_photons = min(batch_size, sampler.num_photons - worked_on_index)
+        worked_on_end_index = worked_on_index + curr_num_photons
+        logging.info("------------------------------------------------------------------")
+        logging.info("------------------------------------------------------------------")
+        logging.info(f"Processing photons from index {worked_on_index} to {worked_on_end_index}.")
+        logging.info("------------------------------------------------------------------")
+        logging.info("------------------------------------------------------------------")
+        positions_batch = positions[worked_on_index:worked_on_end_index]
+        directions_batch = directions[worked_on_index:worked_on_end_index]
+        energies_batch = energies[worked_on_index:worked_on_end_index]
+        intensities_batch = intensities[worked_on_index:worked_on_end_index]
+        randoms_batch = sampler.randoms[worked_on_index:worked_on_end_index,:]
+
+        new_positions, entry_points, crossed_voxels, crossed_materials, distances, \
+            forward_iterations = world.traverse_grid_air(positions_batch, directions_batch)
+        positions_batch = new_positions.copy()
         
-        if scatter_index == 0:
-            primary_detector.add_signal(arrive_detector_positions, detector_signals)
-        else:
-            scatter_detector.add_signal(arrive_detector_positions, detector_signals)
+        for scatter_index in range(sampler.num_scatters):
+            distance_randoms = randoms_batch[:,(1+scatter_index)*3]
+            compton_randoms = randoms_batch[:,(1+scatter_index)*3+1:(1+scatter_index)*3+3]
+            logging.info(f"Scatter iteration {scatter_index + 1}/{sampler.num_scatters}.")
+            arrive_detector_positions, detector_signals, intensities_batch, positions_batch, energies_batch \
+                = world.fd_iteration(positions_batch, directions_batch, distance_randoms, compton_randoms, att, energies_batch, intensities_batch)
+            
+            if scatter_index == 0:
+                primary_detector.add_signal(arrive_detector_positions, detector_signals)
+            else:
+                scatter_detector.add_signal(arrive_detector_positions, detector_signals)
+
+        worked_on_index = worked_on_end_index
 
     eval = Evaluation(
-        primary_detector.detector_grid,
-        scatter_detector.detector_grid)
+        primary_energies=primary_detector.detector_grid,
+        scatter_energies=scatter_detector.detector_grid)
     eval.store_detector_grids(phantom.phantom_type_path)
+    eval.store_plots(phantom.phantom_type_path)
     
 pass

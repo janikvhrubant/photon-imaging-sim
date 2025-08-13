@@ -128,9 +128,20 @@ class WorldGrid:
             arrived[active] = arrived_active
             active = ~(exit_grid | arrived)
 
-            if np.sum(active) != 0:
+            if np.sum(active) != 0 and np.max(forward_iterations) % 100 == 0:
                 self.logger.info(f"Forward Iteration {np.max(forward_iterations)} completed, active photons: {np.sum(active)}")
-
+            if np.max(forward_iterations) == 6009:
+                pass
+#   File "/Users/I551264/Developer/privat/photon-imaging-sim/main.py", line 60, in <module>
+#     forward_iterations = world.traverse_grid_air(positions_batch, directions_batch)
+#   File "/Users/I551264/Developer/privat/photon-imaging-sim/src/simulation/grids.py", line 145, in traverse_grid_air
+#     return self.traverse_grid(positions, directions, through_air=True)
+#            ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "/Users/I551264/Developer/privat/photon-imaging-sim/src/simulation/grids.py", line 136, in traverse_grid
+#     entry_points = np.stack(entry_points_slices, axis=0)
+#   File "/Users/I551264/.pyenv/versions/3.13.5/lib/python3.13/site-packages/numpy/_core/shape_base.py", line 456, in stack
+#     raise ValueError('need at least one array to stack')
+# ValueError: need at least one array to stack
         entry_points = np.stack(entry_points_slices, axis=0)
         crossed_voxels = np.stack(crossed_voxels_slices, axis=0)
         crossed_materials = np.stack(crossed_materials_slices, axis=0)
@@ -171,7 +182,7 @@ class WorldGrid:
                 attenuations_coeff_map[material_mask] = attenuation.total_with_coherent_funs[material](energies_map[material_mask])
 
         # Calc full attenuation
-        attenuations_in_voxels = attenuations_coeff_map*distances
+        attenuations_in_voxels = attenuations_coeff_map*distances*self.voxel_size
         attenuations_through_material = np.sum(attenuations_in_voxels, axis=0)
         intensity_behind_material = np.exp(-attenuations_through_material)
 
@@ -187,13 +198,13 @@ class WorldGrid:
         while np.any(photons_active_mask):
             curr_voxel_distances = distances[voxel_index,photons_active_mask]
             curr_voxel_att_coeffs = attenuations_coeff_map[voxel_index,photons_active_mask]
-            curr_voxel_att = curr_voxel_distances * curr_voxel_att_coeffs
+            curr_voxel_att = curr_voxel_distances * curr_voxel_att_coeffs # HERE MAYBE MULTIPLY BY VOXEL SIZE?
             over_goal_mask = (curr_attenuation_sums[photons_active_mask]+curr_voxel_att) >= att_int_goal_value[photons_active_mask]
             if np.any(over_goal_mask):
                 combined_mask = photons_active_mask.copy()
                 combined_mask[photons_active_mask] = over_goal_mask
                 rest_int = att_int_goal_value[combined_mask] - curr_attenuation_sums[combined_mask]
-                rest_dist = rest_int/curr_voxel_att_coeffs[over_goal_mask]
+                rest_dist = rest_int/(curr_voxel_att_coeffs[over_goal_mask])  # HERE MAYBE DEVIDE BY VOXEL SIZE?
                 curr_distances_sums[combined_mask] += rest_dist
                 curr_attenuation_sums[combined_mask] += rest_dist * curr_voxel_att[over_goal_mask]
             photons_active_mask[photons_active_mask] = ~over_goal_mask
@@ -215,7 +226,7 @@ class WorldGrid:
             forward_iterations = self.traverse_grid_air(exit_phantom_positions, directions)
 
         passed_voxels_until_distance_hit_i = np.arange(passed_voxels_until_distance_hit.shape[0])
-        ended_voxels = crossed_voxels[passed_voxels_until_distance_hit, passed_voxels_until_distance_hit_i, :]
+        # ended_voxels = crossed_voxels[passed_voxels_until_distance_hit, passed_voxels_until_distance_hit_i, :]
         ended_materials = crossed_materials_phantom[passed_voxels_until_distance_hit, passed_voxels_until_distance_hit_i]
         compton_attenuation_coeffs = np.zeros_like(ended_materials, dtype=float)
         pass

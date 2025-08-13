@@ -1,9 +1,17 @@
 PHANTOM:
-  object: WaterWall
-  shape: [100, 100, 200]
+  # object: WaterWall
+  # shape: [100, 100, 200]
+  # wall_thickness: 10.0
+  # voxel_size: 1.0
+  # detector_distance: 10.0
+  object: BoneWaterWall
+  shape: [2000, 2000, 7000]
   wall_thickness: 10.0
-  voxel_size: 1.0
+  voxel_size: 0.01
   detector_distance: 10.0
+  n_bones: 3
+  wall_material_id: 1
+  bone_material_id: 2
 
 XRAY_TUBE:
   tube_voltage: 120
@@ -16,5 +24,6 @@ XRAY_TUBE:
 SAMPLER:
   sampling_strategy: "MC"
   num_photons: 1e6
-  num_scatters: 10
+  num_scatters: 15
+  batch_size: 1e5
 
