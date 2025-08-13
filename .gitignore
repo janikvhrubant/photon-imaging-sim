@@ -208,3 +208,6 @@ __marimo__/
 
 
 architecture.txt
+
+data/input/*
+data/output/*
