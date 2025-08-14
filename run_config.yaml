@@ -3,11 +3,11 @@ PHANTOM:
   # shape: [100, 100, 200]
   # wall_thickness: 10.0
   # voxel_size: 1.0
-  # detector_distance: 10.0
+  # detector_distance: 1.0
   object: BoneWaterWall
-  shape: [2000, 2000, 7000]
-  wall_thickness: 10.0
-  voxel_size: 0.01
+  shape: [200, 200, 1200]
+  wall_thickness: 7.0
+  voxel_size: 0.1
   detector_distance: 10.0
   n_bones: 3
   wall_material_id: 1
@@ -22,7 +22,7 @@ XRAY_TUBE:
   beam_angle: null
 
 SAMPLER:
-  sampling_strategy: "MC"
+  sampling_strategy: "QMC"
   num_photons: 1e6
   num_scatters: 15
   batch_size: 1e5
